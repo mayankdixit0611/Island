@@ -42,29 +42,32 @@ let mixer = null
 var light = new THREE.AmbientLight(0xffffff);
 scene.add(light);
 
-var directionalLight = new THREE.PointLight(0xe0b47a, 0.5);
-directionalLight.position.set(-6, 4, 4);
+var directionalLight = new THREE.DirectionalLight(0xe0b47a, 3);
+directionalLight.position.set(0, 4, 3)
+//directionalLight.castShadow = true;
 scene.add(directionalLight);
+const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2);
+//scene.add(directionalLightHelper);
 
-var directionalLight2 = new THREE.PointLight(0xbfceff, 0.5);
-directionalLight2.position.set(6, 4, 4);
-scene.add(directionalLight2);
+// var directionalLight2 = new THREE.PointLight(0xbfceff, 0.5);
+// directionalLight2.position.set(6, 4, 4);
+// scene.add(directionalLight2);
 
-var directionalLight3 = new THREE.PointLight(0xe0b47a, 0.5);
-directionalLight3.position.set(-6, 4, -4);
-scene.add(directionalLight3);
+// var directionalLight3 = new THREE.PointLight(0xe0b47a, 0.5);
+// directionalLight3.position.set(-6, 4, -4);
+// scene.add(directionalLight3);
 
-var directionalLight4 = new THREE.PointLight(0xbfceff, 0.5);
-directionalLight4.position.set(6, 4, -4);
-scene.add(directionalLight4);
+// var directionalLight4 = new THREE.PointLight(0xbfceff, 0.5);
+// directionalLight4.position.set(6, 4, -4);
+// scene.add(directionalLight4);
 
 
 gltfLoader.load(
-    '/models/VB/VB.gltf',
+    '/models/Island/island.gltf',
     (gltf) => {
         const model = gltf.scene;
-        model.scale.set(2.25, 2.25, 2.25)
-        model.position.set(0, -1, 0);
+        model.scale.set(0.00025, 0.00025, 0.00025)
+        model.position.set(0, 0, 0);
 
         gltfObjects = gltf.scene;
 
@@ -72,11 +75,18 @@ gltfLoader.load(
 
         model.traverse(function (child) {
             objects.push(child);
+            //child.receiveShadow =true;
             //console.log(child.name);
             if (child.name == "SM_LowerBody_1" || child.name == "SM_LowerBody_2" || child.name == "SM_LowerBody_3") {
                 child.material.metalness = 0.4
-            } else if (child.name == "SM_Glass_1" || child.name == "SM_Glass_2" || child.name == "SM_DoorPanel_1" ||child.name == "SM_DoorPanel_2") {
-                console.log(child)               
+            } else if (child.name == "SM_Glass_1" || child.name == "SM_Glass_2" || child.name == "SM_DoorPanel_1" || child.name == "SM_DoorPanel_2") {
+                console.log(child)
+            }
+            if (child.name == "SM_Water") {
+                child.receiveShadow = true;
+                child.material.opacity = 0.7;
+            } else {
+                child.castShadow = true;
             }
         });
         scene.add(model)
@@ -148,9 +158,13 @@ window.addEventListener('click', () => {
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(85, sizes.width / sizes.height, 0.25, 16)
-camera.position.set(0, 0, 3);
+const camera = new THREE.PerspectiveCamera(25, sizes.width / sizes.height, 0.25, 16)
+camera.position.set(100000, 80000, 3);
 scene.add(camera)
+
+// gui.add( camera.position , 'z', 10000, 10000000 ).step(100)
+// gui.add( camera.position , 'x', 10000, 10000000 ).step(1000)
+// gui.add( camera.position , 'y', 10000, 10000000 ).step(1000)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
@@ -168,6 +182,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.setClearColor(0xffffff);
+renderer.shadowMap.enabled = true;
 
 /**
  * Animate
