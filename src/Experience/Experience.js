@@ -2,15 +2,17 @@ import * as THREE from 'three';
 import Renderer from './Renderer';
 import gsap from 'gsap';
 import Sizes from './Utils/Sizes';
-import GLTFModelLoader from './GLTFLoader';
 import Time from './Utils/Time';
 import Camera from './Camera';
-import Light from './Light';
+import Resources from './Utils/Resources';
+import Sources from './Sources';
+import World from './World/World';
+import Debug from './Utils/Debug';
 
 let instance = null;
 
 export default class Experience {
-    constructor(_canvas, _modelPath) {
+    constructor(_canvas) {
         if (instance)
             return instance;
 
@@ -20,21 +22,24 @@ export default class Experience {
         window.experience = this;
 
         this.canvas = _canvas;
-        this.modelPath = _modelPath;
-        this.scene = new THREE.Scene();
-        this.mouse = new THREE.Vector2();
-        this.sizes = new Sizes();
-        this.camera = new Camera();
-        this.renderer = new Renderer()
-        this.gltfLoader = new GLTFModelLoader();
-        this.time = new Time();
-        this.light = new Light();
-
+        this.objects = [];
         this.currentIntersect = null;
 
-        this.mouseMoveEvent();
-        this.clickEvent();
+        this.debug = new Debug()
+        this.resources = new Resources(Sources);
+        this.scene = new THREE.Scene();
+        this.raycaster = new THREE.Raycaster();
+        this.sizes = new Sizes();
+        this.camera = new Camera();
+        this.mouse = new THREE.Vector2();
+        this.time = new Time();
+        this.renderer = new Renderer()
+        this.world = new World();
         
+        
+        this.mouseMoveEvent();
+        this.clickEvent();        
+
         // Resize event
         this.sizes.on('resize', () => {
             this.resize()
@@ -53,6 +58,7 @@ export default class Experience {
 
     update() {
         this.camera.update();
+        //this.world.update();
         this.renderer.update()
     }
 
@@ -81,5 +87,39 @@ export default class Experience {
                 }
             }
         })
+    }
+
+    destroy()
+    {
+        this.sizes.off('resize')
+        this.time.off('tick')
+
+        // Traverse the whole scene
+        this.scene.traverse((child) =>
+        {
+            // Test if it's a mesh
+            if(child instanceof THREE.Mesh)
+            {
+                child.geometry.dispose()
+
+                // Loop through the material properties
+                for(const key in child.material)
+                {
+                    const value = child.material[key]
+
+                    // Test if there is a dispose function
+                    if(value && typeof value.dispose === 'function')
+                    {
+                        value.dispose()
+                    }
+                }
+            }
+        })
+
+        this.camera.controls.dispose()
+        this.renderer.instance.dispose()
+
+        if(this.debug.active)
+            this.debug.ui.destroy()
     }
 }
