@@ -15,7 +15,6 @@ export default class Time extends EventEmitter
         this.elapsed = 0
         this.delta = 16
         this.raycaster = this.experience.raycaster;
-        this.currentIntersect = this.experience.currentIntersect;
         this.mouse = this.experience.mouse;
         this.camera = this.experience.camera;
         this.objects = this.experience.objects;
@@ -30,14 +29,14 @@ export default class Time extends EventEmitter
     {
         
         
-        // this.raycaster.setFromCamera(this.mouse, this.camera);
+        this.raycaster.setFromCamera(this.mouse, this.camera.instance);
 
-        // const intersects = this.raycaster.intersectObjects(this.objects);
-        // if(intersects.length){
-        //     this.currentIntersect = intersects[0];
-        // }else{
-        //     this.currentIntersect = null;
-        // }
+        const intersects = this.raycaster.intersectObjects(this.objects);
+        if(intersects.length){
+            this.experience.currentIntersect = intersects[0];
+        }else{
+            this.experience.currentIntersect = null;
+        }
         
         const currentTime = Date.now()
         this.delta = currentTime - this.current

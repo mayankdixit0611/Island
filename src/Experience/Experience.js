@@ -72,19 +72,19 @@ export default class Experience {
     clickEvent() {
         window.addEventListener('click', () => {
             if (this.currentIntersect) {
-                if (this.currentIntersect.object.name == "SM_Button_1_1") {
-                    moveToSelectedObject(this.currentIntersect.object, 1, 1);
-                } else if (this.currentIntersect.object.name == "SM_Button_1_2") {
-                    moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                } else if (this.currentIntersect.object.name == "SM_Button_2_1") {
-                    moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                } else if (this.currentIntersect.object.name == "SM_Button_2_2") {
-                    moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                } else if (this.currentIntersect.object.name == "SM_Button_3_1") {
-                    moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                } else if (this.currentIntersect.object.name == "SM_Button_3_2") {
-                    moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                }
+                //if (this.currentIntersect.object.name == "SM_Button_1_1") {
+                    this.moveToSelectedObject(this.currentIntersect.object, 1, 1);
+                // } else if (this.currentIntersect.object.name == "SM_Button_1_2") {
+                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
+                // } else if (this.currentIntersect.object.name == "SM_Button_2_1") {
+                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
+                // } else if (this.currentIntersect.object.name == "SM_Button_2_2") {
+                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
+                // } else if (this.currentIntersect.object.name == "SM_Button_3_1") {
+                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
+                // } else if (this.currentIntersect.object.name == "SM_Button_3_2") {
+                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
+                // }
             }
         })
     }
@@ -121,5 +121,21 @@ export default class Experience {
 
         if(this.debug.active)
             this.debug.ui.destroy()
+    }
+
+    moveToSelectedObject(object, x, y) {
+        var aabb = new THREE.Box3().setFromObject(object);
+        var center = aabb.getCenter(new THREE.Vector3());
+        var size = aabb.getSize(new THREE.Vector3());
+        gsap.to(this.camera.instance.position, {
+            duration: 1,
+            x: center.x,
+            y: center.y,
+            z: center.z + size.z, // maybe adding even more offset depending on your model
+            onUpdate: function () {
+                this.camera.instance.fov = 50
+                this.camera.instance.updateProjectionMatrix();
+            }
+        });
     }
 }
