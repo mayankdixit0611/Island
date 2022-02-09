@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import Renderer from './Renderer';
 import gsap from 'gsap';
 import Sizes from './Utils/Sizes';
+import Cursor from './Utils/Cursor';
 import Time from './Utils/Time';
 import Camera from './Camera';
 import Resources from './Utils/Resources';
@@ -30,21 +31,25 @@ export default class Experience {
         this.scene = new THREE.Scene();
         this.raycaster = new THREE.Raycaster();
         this.sizes = new Sizes();
+        this.cursor = new Cursor();
         this.camera = new Camera();
         this.mouse = new THREE.Vector2();
         this.time = new Time();
         this.renderer = new Renderer()
-        this.world = new World();
-        
-        
-        this.mouseMoveEvent();
-        this.clickEvent();        
+        this.world = new World();              
 
         // Resize event
         this.sizes.on('resize', () => {
             this.resize()
         })
-
+        // Cursor movement event
+        this.cursor.on('cursor_movement', () => {
+            this.mouseMoveEvent();
+        })
+        // Click event
+        this.cursor.on('click', () => {
+            this.clickEvent();
+        })
         //Time click event
         this.time.on('tick', () => {
             this.update();
@@ -58,35 +63,17 @@ export default class Experience {
 
     update() {
         this.camera.update();
-        //this.world.update();
+        this.world.update();
         this.renderer.update()
     }
 
     mouseMoveEvent() {
-        window.addEventListener('mousemove', (event) => {
-            this.mouse.x = event.clientX / this.sizes.width * 2 - 1
-            this.mouse.y = -(event.clientY / this.sizes.height) * 2 + 1
-        })
+        this.mouse.x = this.cursor.x / this.sizes.width * 2 - 1
+        this.mouse.y = - (this.cursor.y / this.sizes.height) * 2 + 1
     }
 
     clickEvent() {
-        window.addEventListener('click', () => {
-            if (this.currentIntersect) {
-                //if (this.currentIntersect.object.name == "SM_Button_1_1") {
-                    this.moveToSelectedObject(this.currentIntersect.object, 1, 1);
-                // } else if (this.currentIntersect.object.name == "SM_Button_1_2") {
-                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                // } else if (this.currentIntersect.object.name == "SM_Button_2_1") {
-                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                // } else if (this.currentIntersect.object.name == "SM_Button_2_2") {
-                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                // } else if (this.currentIntersect.object.name == "SM_Button_3_1") {
-                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                // } else if (this.currentIntersect.object.name == "SM_Button_3_2") {
-                //     moveToSelectedObject(this.currentIntersect.object, -1, 1);
-                // }
-            }
-        })
+        this.world.click();
     }
 
     destroy()
@@ -121,21 +108,5 @@ export default class Experience {
 
         if(this.debug.active)
             this.debug.ui.destroy()
-    }
-
-    moveToSelectedObject(object, x, y) {
-        var aabb = new THREE.Box3().setFromObject(object);
-        var center = aabb.getCenter(new THREE.Vector3());
-        var size = aabb.getSize(new THREE.Vector3());
-        gsap.to(this.camera.instance.position, {
-            duration: 1,
-            x: center.x,
-            y: center.y,
-            z: center.z + size.z, // maybe adding even more offset depending on your model
-            onUpdate: function () {
-                this.camera.instance.fov = 50
-                this.camera.instance.updateProjectionMatrix();
-            }
-        });
     }
 }

@@ -24,4 +24,10 @@ export default class World
         if(this.island)
             this.island.update()
     }
+    
+    click() 
+    {
+        if(this.island)
+            this.island.click()
+    }
 }
