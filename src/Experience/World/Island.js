@@ -44,62 +44,63 @@ export default class Island {
         })
     }
 
-    setAnimation() {
-        this.animation = {}
+    // setAnimation() {
+    //     this.animation = {}
 
-        // Mixer
-        this.animation.mixer = new THREE.AnimationMixer(this.model)
+    //     // Mixer
+    //     this.animation.mixer = new THREE.AnimationMixer(this.model)
 
-        // Actions
-        this.animation.actions = {}
+    //     // Actions
+    //     this.animation.actions = {}
 
-        this.animation.actions.idle = this.animation.mixer.clipAction(this.resource.animations[0])
-        this.animation.actions.walking = this.animation.mixer.clipAction(this.resource.animations[1])
-        this.animation.actions.running = this.animation.mixer.clipAction(this.resource.animations[2])
+    //     this.animation.actions.idle = this.animation.mixer.clipAction(this.resource.animations[0])
+    //     this.animation.actions.walking = this.animation.mixer.clipAction(this.resource.animations[1])
+    //     this.animation.actions.running = this.animation.mixer.clipAction(this.resource.animations[2])
 
-        this.animation.actions.current = this.animation.actions.idle
-        this.animation.actions.current.play()
+    //     this.animation.actions.current = this.animation.actions.idle
+    //     this.animation.actions.current.play()
 
-        // Play the action
-        this.animation.play = (name) => {
-            const newAction = this.animation.actions[name]
-            const oldAction = this.animation.actions.current
+    //     // Play the action
+    //     this.animation.play = (name) => {
+    //         const newAction = this.animation.actions[name]
+    //         const oldAction = this.animation.actions.current
 
-            newAction.reset()
-            newAction.play()
-            newAction.crossFadeFrom(oldAction, 1)
+    //         newAction.reset()
+    //         newAction.play()
+    //         newAction.crossFadeFrom(oldAction, 1)
 
-            this.animation.actions.current = newAction
-        }
+    //         this.animation.actions.current = newAction
+    //     }
 
-        // Debug
-        if (this.debug.active) {
-            const debugObject = {
-                playIdle: () => {
-                    this.animation.play('idle')
-                },
-                playWalking: () => {
-                    this.animation.play('walking')
-                },
-                playRunning: () => {
-                    this.animation.play('running')
-                }
-            }
-            this.debugFolder.add(debugObject, 'playIdle')
-            this.debugFolder.add(debugObject, 'playWalking')
-            this.debugFolder.add(debugObject, 'playRunning')
-        }
-    }
+    //     // Debug
+    //     if (this.debug.active) {
+    //         const debugObject = {
+    //             playIdle: () => {
+    //                 this.animation.play('idle')
+    //             },
+    //             playWalking: () => {
+    //                 this.animation.play('walking')
+    //             },
+    //             playRunning: () => {
+    //                 this.animation.play('running')
+    //             }
+    //         }
+    //         this.debugFolder.add(debugObject, 'playIdle')
+    //         this.debugFolder.add(debugObject, 'playWalking')
+    //         this.debugFolder.add(debugObject, 'playRunning')
+    //     }
+    // }
 
     update() {
-        this.animation.mixer.update(this.time.delta * 0.001)
+        // this.animation.mixer.update(this.time.delta * 0.001)
 
     }
 
     click() {
         if(this.experience.currentIntersect)
         {
-            this.moveToSelectedObject(this.experience.currentIntersect.object, 1, 1)
+            if(this.experience.currentIntersect.object.name !== 'SM_Water')
+                this.moveToSelectedObject(this.experience.currentIntersect.object, 1, 1)
         }
     }
 
@@ -112,7 +113,7 @@ export default class Island {
             x: center.x,
             y: center.y,
             z: center.z + size.z, // maybe adding even more offset depending on your model
-            onUpdate: function () {
+            onUpdate: () => {
                 this.camera.instance.fov = 50
                 this.camera.instance.updateProjectionMatrix();
             }

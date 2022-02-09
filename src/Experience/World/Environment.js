@@ -40,8 +40,8 @@ export default class Environment
         this.scene.add(this.sunLight)
         // const directionalLightHelper = new THREE.DirectionalLightHelper(this.sunLight, 0.2);
         // this.scene.add(directionalLightHelper);
-        const sunLightCameraHelper = new THREE.CameraHelper(this.sunLight.shadow.camera);
-        this.scene.add(sunLightCameraHelper);
+        // const sunLightCameraHelper = new THREE.CameraHelper(this.sunLight.shadow.camera);
+        // this.scene.add(sunLightCameraHelper);
 
         // Debug
         if(this.debug.active)
