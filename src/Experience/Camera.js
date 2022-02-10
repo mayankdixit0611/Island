@@ -24,13 +24,23 @@ export default class Camera {
     setControls() {
         this.controls = new OrbitControls(this.instance, this.canvas)
         this.controls.enableDamping = true
-        //this.controls.dampingFactor = 0.25;
+        this.controls.dampingFactor = 0.25;
 
         //set zoom level
         this.controls.minDistance = 3;
         this.controls.maxDistance = 8;
+        
+        //this.controls.target.set(4.5, 0, 4.5);
+        //this.controls.enablePan = false;
+        this.controls.maxPolarAngle = Math.PI / 2;
+        this.controls.screenSpacePanning = false;
 
-        this.controls.maxPolarAngle = Math.PI / 2.5;
+        this.controls.enableRotate = false;
+        this.controls.enablePan = true;
+        this.controls.mouseButtons = {LEFT: THREE.MOUSE.PAN}
+        this.controls.touches = {
+            ONE: THREE.TOUCH.DOLLY_PAN
+        }
     }
 
     resize()
