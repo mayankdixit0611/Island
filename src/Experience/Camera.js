@@ -13,6 +13,7 @@ export default class Camera {
 
         this.setInstance();
         this.setControls();
+        this.panningToVisibleAreaOnly();
     }
 
     setInstance() {
@@ -25,32 +26,41 @@ export default class Camera {
         this.controls = new OrbitControls(this.instance, this.canvas)
         this.controls.enableDamping = true
         this.controls.dampingFactor = 0.25;
-
-        //set zoom level
         this.controls.minDistance = 3;
         this.controls.maxDistance = 8;
-        
-        //this.controls.target.set(4.5, 0, 4.5);
-        //this.controls.enablePan = false;
         this.controls.maxPolarAngle = Math.PI / 2;
         this.controls.screenSpacePanning = false;
 
         this.controls.enableRotate = false;
         this.controls.enablePan = true;
-        this.controls.mouseButtons = {LEFT: THREE.MOUSE.PAN}
+        this.controls.mouseButtons = {
+            LEFT: THREE.MOUSE.PAN
+        }
         this.controls.touches = {
             ONE: THREE.TOUCH.DOLLY_PAN
-        }
+        }        
     }
 
-    resize()
-    {
+    resize() {
         this.instance.aspect = this.sizes.width / this.sizes.height
         this.instance.updateProjectionMatrix()
     }
 
-    update()
-    {
+    update() {
         this.controls.update()
+    }
+
+    panningToVisibleAreaOnly(){
+        const minPan = new THREE.Vector3(-2, -2, -2);
+        const maxPan = new THREE.Vector3(2, 2, 2);
+
+        const _v = new THREE.Vector3();
+
+        this.controls.addEventListener("change", () => {
+            _v.copy(this.controls.target);
+            this.controls.target.clamp(minPan, maxPan);
+            _v.sub(this.controls.target);
+            this.instance.position.sub(_v);
+        })
     }
 }
