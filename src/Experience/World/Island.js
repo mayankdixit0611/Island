@@ -99,8 +99,8 @@ export default class Island {
     click() {
         if(this.experience.currentIntersect)
         {
-            if(this.experience.currentIntersect.object.name !== 'SM_Water')
-                this.moveToSelectedObject(this.experience.currentIntersect.object, 1, 1)
+            // if(this.experience.currentIntersect.object.name !== 'SM_Water')
+            //     this.moveToSelectedObject(this.experience.currentIntersect.object, 1, 1)
         }
     }
 
