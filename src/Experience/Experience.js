@@ -9,6 +9,7 @@ import Resources from './Utils/Resources';
 import Sources from './Sources';
 import World from './World/World';
 import Debug from './Utils/Debug';
+import LoadingBar from "./LoadingBar"
 
 let instance = null;
 
@@ -18,6 +19,8 @@ export default class Experience {
             return instance;
 
         instance = this;
+        this.scene = new THREE.Scene();
+        this.loadingBar = new LoadingBar(this.scene);
 
         //Global access
         window.experience = this;
@@ -27,8 +30,8 @@ export default class Experience {
         this.currentIntersect = null;
 
         this.debug = new Debug()
-        this.resources = new Resources(Sources);
-        this.scene = new THREE.Scene();
+        this.resources = new Resources(Sources, this.loadingBar.gtfLoader);
+        
         this.raycaster = new THREE.Raycaster();
         this.sizes = new Sizes();
         this.cursor = new Cursor();
@@ -38,6 +41,8 @@ export default class Experience {
         this.renderer = new Renderer()
         this.world = new World();              
 
+        //add loader
+        this.loadingBar.addToScene();
         // Resize event
         this.sizes.on('resize', () => {
             this.resize()
@@ -54,6 +59,8 @@ export default class Experience {
         this.time.on('tick', () => {
             this.update();
         })
+
+        
     }
 
     resize() {
