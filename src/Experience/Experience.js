@@ -9,6 +9,7 @@ import Resources from './Utils/Resources';
 import Sources from './Sources';
 import World from './World/World';
 import Debug from './Utils/Debug';
+import CSVData from './ReadData';
 
 let instance = null;
 
@@ -36,7 +37,14 @@ export default class Experience {
         this.mouse = new THREE.Vector2();
         this.time = new Time();
         this.renderer = new Renderer()
-        this.world = new World();              
+        this.world = new World();  
+        
+        //data
+        this.lands = [];
+        this.tooltip = {};
+
+        this.data = new CSVData()
+
 
         // Resize event
         this.sizes.on('resize', () => {
@@ -70,6 +78,9 @@ export default class Experience {
     mouseMoveEvent() {
         this.mouse.x = this.cursor.x / this.sizes.width * 2 - 1
         this.mouse.y = - (this.cursor.y / this.sizes.height) * 2 + 1
+        this.tooltip.x = this.cursor.x;
+        this.tooltip.y =  this.cursor.y;
+        this.world.mouseMove(); 
     }
 
     clickEvent() {
