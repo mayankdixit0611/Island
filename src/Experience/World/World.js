@@ -1,6 +1,7 @@
 import Experience from '../Experience.js';
 import Environment from './Environment.js';
 import Island from './Island.js';
+import Ocean from './ocean.js';
 
 export default class World
 {
@@ -14,6 +15,7 @@ export default class World
         this.resources.on('ready', () =>
         {
             // Setup
+            this.ocean = new Ocean()
             this.island = new Island()
             this.environment = new Environment()
         })
@@ -23,6 +25,7 @@ export default class World
     {
         if(this.island)
             this.island.update()
+        
     }
     
     click() 

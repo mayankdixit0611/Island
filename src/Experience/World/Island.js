@@ -15,7 +15,7 @@ export default class Island {
         this.debug = this.experience.debug;
         this.objects = this.experience.objects;
         this.camera = this.experience.camera;
-        this.sun= null;
+        this.sun = null;
         this.water = null;
 
         // Debug
@@ -27,11 +27,11 @@ export default class Island {
         this.resource = this.resources.items.islandModel;
 
         this.setModel();
-        this.createWater();
+        //this.createWater();
         //this.setAnimation()
     }
 
-    createWater(){
+    createWater() {
         this.sun = new THREE.Vector3();
         const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
 
@@ -40,22 +40,22 @@ export default class Island {
             textureWidth: 512,
             textureHeight: 512,
             waterNormals: new THREE.TextureLoader().load(
-              waterMaterial,
-              function (texture) {
-                texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-              }
+                waterMaterial,
+                function (texture) {
+                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                }
             ),
             sunDirection: new THREE.Vector3(),
             sunColor: 0xffffff,
             waterColor: 0x259CC8,
             distortionScale: 3.7
-          });
-      
-          this.water.rotation.x = -Math.PI / 2;
-      
-          this.water.material.uniforms.size.value = 15;
+        });
 
-          this.scene.add(this.water);
+        this.water.rotation.x = -Math.PI / 2;
+
+        this.water.material.uniforms.size.value = 15;
+
+        this.scene.add(this.water);
     }
     setModel() {
         this.model = this.resource.scene
@@ -74,7 +74,7 @@ export default class Island {
             }
         });
 
-        
+
         document.getElementById('loader').style.display = 'none';
     }
 
@@ -94,16 +94,10 @@ export default class Island {
         this.hideTooltip();
         if (this.experience.currentIntersect && this.experience.currentIntersect.object &&
             this.experience.currentIntersect.object instanceof THREE.Mesh) {
-            if (this.experience.currentIntersect.object.name === 'Box213') {
-                const mesh = this.experience.currentIntersect.object;
-                console.log(mesh);
-                if (mesh.material.color.getHex() === 16711680)
-                    mesh.material.color.setHex(this.experience.currentHex);
-                this.getLandFromCSVData(mesh);
-                this.experience.currentHex = mesh.material.color.getHex()
-                if (mesh.material.color.getHex() !== 16711680)
-                    mesh.material.color.setHex(0xff0000)
-            }
+            //if (this.experience.currentIntersect.object.name === 'Box213') {
+
+            this.getLandFromCSVData(this.experience.currentIntersect.object);
+            //}
         }
     }
 
@@ -112,6 +106,11 @@ export default class Island {
             if (data['VLAND ID'] === meshLand.name || meshLand.name === "Box213") {
                 const html = this.setTooltipData(data);
                 this.showTooltip(html);
+                // if (meshLand.material.color.getHex() === 16711680)
+                //     meshLand.material.color.setHex(this.experience.currentHex);
+                // this.experience.currentHex = meshLand.material.color.getHex()
+                // if (meshLand.material.color.getHex() !== 16711680)
+                //     meshLand.material.color.setHex(0xff0000)
             }
         });
     }
