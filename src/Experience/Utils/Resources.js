@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { DRACOLoader } from 'three/examples/jsm/loaders/dracoloader'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import EventEmitter from './EventEmitter.js'
 
@@ -35,7 +35,7 @@ export default class Resources extends EventEmitter
         {
             if(source.type === 'gltfModel')
             {
-                this.dracoLoader.setDecoderPath('/examples/js/libs/draco/');
+                this.dracoLoader.setDecoderPath('/js/libs/draco/');
                 this.loaders.gltfLoader.setDRACOLoader(this.dracoLoader);
                 this.loaders.gltfLoader.load(
                     source.path,

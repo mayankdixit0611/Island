@@ -28,9 +28,8 @@ export default class Ocean {
     }
 
     setModel() {
-        this.model = this.resource.scene
-        this.model.scale.set(0.02, 0.02, 0.02)
-        this.model.scale.set(0.00025, 0.00025, 0.00025)
+        this.model = this.resource.scene;
+        this.model.scale.set(this.experience.scale, this.experience.scale, this.experience.scale)
         this.model.position.set(0, 0, 0);
         this.scene.add(this.model)
 

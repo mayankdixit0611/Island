@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import Experience from '../Experience.js'
+import { addDirectionalLight, addPointLight } from '../Utils/three-helper.js';
 
 export default class Environment {
     constructor() {
@@ -19,32 +20,21 @@ export default class Environment {
     }
 
     setAmbientLight() {
-        this.ambientlight = new THREE.AmbientLight(0xffffff);
+        this.ambientlight = new THREE.AmbientLight('white',10);
         this.scene.add(this.ambientlight);
+
+        // this.heim = new THREE.HemisphereLight(0xffffbb, 0x080820, 1)
+        // this.scene.add(this.heim);
     }
 
     setSunLight() {
-        // this.sunLight = new THREE.DirectionalLight(0xffffff, 5)
-        // this.sunLight.castShadow = true
-        // //this.sunLight.shadow.camera.far = 15
-        // // this.sunLight.shadow.mapSize.set(1024, 1024)
-        // // this.sunLight.shadow.normalBias = 0.05
-        // this.sunLight.position.set(-10,-10,-10);
-        // //this.sunLight.position.set(3.5, 2, - 1.25)
-        // // this.sunLight.shadow.camera.near = 1;
-        // // this.sunLight.shadow.camera.far = 6
-        // this.scene.add(this.sunLight)
+        //Add point light in top
+        this.pointLight = addPointLight(0xffffff, 1, 1000, { x: 0, y: 8, z: 0 }, {}, false);
+        this.scene.add(this.pointLight);
 
-        this.sunLight = new THREE.DirectionalLight(0xffffff, 4)
-        this.sunLight.castShadow = true
-        this.sunLight.shadow.mapSize.set(1024, 1024)
-        this.sunLight.shadow.normalBias = 0.05
-        this.sunLight.position.set(0.206, 1.067, 1.927);
+        //Add directional light
+        this.sunLight = addDirectionalLight(0xffffff, 1.887, { x: 8, y: 8, z: 8 }, {}, false);
         this.scene.add(this.sunLight);
-        const directionalLightHelper = new THREE.DirectionalLightHelper(this.sunLight, 0.2);
-        this.scene.add(directionalLightHelper);
-        // const sunLightCameraHelper = new THREE.CameraHelper(this.sunLight.shadow.camera);
-        // this.scene.add(sunLightCameraHelper);
 
         // Debug
         if (this.debug.active) {
@@ -76,22 +66,50 @@ export default class Environment {
                 .max(5)
                 .step(0.001)
 
-                // this.debugFolder.add(this.sunLight.shadow.mapSize, 'x')
-                // .name('mapSize1').min(-5)
-                // .max(5)
-                // .step(0.001);
+                this.debugFolder
+                .add(this.pointLight, 'intensity')
+                .name('pointLightIntensity')
+                .min(0)
+                .max(10)
+                .step(0.001)
 
-                // this.debugFolder.add(this.sunLight.shadow.mapSize, 'y')
-                // .name('mapSize2').min(-5)
-                // .max(5)
-                // .step(0.001);
+            this.debugFolder
+                .add(this.pointLight.position, 'x')
+                .name('pointLightX')
+                .min(-5)
+                .max(5)
+                .step(0.001)
 
-                this.debugFolder.add(this.sunLight.shadow, 'normalBias')
+            this.debugFolder
+                .add(this.pointLight.position, 'y')
+                .name('pointLightY')
+                .min(-5)
+                .max(5)
+                .step(0.001)
+
+            this.debugFolder
+                .add(this.pointLight.position, 'z')
+                .name('pointLightZ')
+                .min(-5)
+                .max(5)
+                .step(0.001)
+
+            // this.debugFolder.add(this.sunLight.shadow.mapSize, 'x')
+            // .name('mapSize1').min(-5)
+            // .max(5)
+            // .step(0.001);
+
+            // this.debugFolder.add(this.sunLight.shadow.mapSize, 'y')
+            // .name('mapSize2').min(-5)
+            // .max(5)
+            // .step(0.001);
+
+            this.debugFolder.add(this.sunLight.shadow, 'normalBias')
                 .name('normalBias1')
                 .min(-5)
                 .max(5)
                 .step(0.001);
-                
+
         }
     }
 

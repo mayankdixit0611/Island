@@ -33,9 +33,4 @@ export default class World
         if(this.island)
             this.island.click()
     }
-
-    mouseMove(){
-        if(this.island)
-            this.island.mouseMove();
-    }
 }

@@ -1,7 +1,4 @@
-import * as THREE from 'three'
-import {
-    MeshStandardMaterial
-} from 'three';
+import * as THREE from 'three';
 import Experience from '../Experience.js'
 import gsap from "gsap"
 import { Water } from '../Water.js';
@@ -59,21 +56,29 @@ export default class Island {
     }
     setModel() {
         this.model = this.resource.scene
-        this.model.scale.set(0.02, 0.02, 0.02)
-        this.model.scale.set(0.00025, 0.00025, 0.00025)
+        this.model.scale.set(this.experience.scale, this.experience.scale, this.experience.scale)
         this.model.position.set(0, 0, 0);
         this.scene.add(this.model)
 
+        let counter=1;
         this.model.traverse((child) => {
             if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial) {
-                console.log(child);
-                this.objects.push(child);
+                            
 
                 child.receiveShadow = true;
                 child.castShadow = true;
+                //this.objects.push(child);
+                this.experience.lands.forEach((data, index) => {
+                    if (data['VLAND ID'].trim() === child.name.trim()) {
+                       child.userData = data;                       
+                       this.objects.push(child);
+                       //console.log(child);
+                       counter++
+                    }
+                });
+                
             }
         });
-
 
         document.getElementById('loader').style.display = 'none';
     }
@@ -88,66 +93,7 @@ export default class Island {
             // if(this.experience.currentIntersect.object.name !== 'SM_Water')
             //     this.moveToSelectedObject(this.experience.currentIntersect.object, 1, 1)
         }
-    }
-
-    mouseMove() {
-        this.hideTooltip();
-        if (this.experience.currentIntersect && this.experience.currentIntersect.object &&
-            this.experience.currentIntersect.object instanceof THREE.Mesh) {
-            //if (this.experience.currentIntersect.object.name === 'Box213') {
-
-            this.getLandFromCSVData(this.experience.currentIntersect.object);
-            //}
-        }
-    }
-
-    getLandFromCSVData(meshLand) {
-        this.experience.lands.forEach((data, index) => {
-            if (data['VLAND ID'] === meshLand.name || meshLand.name === "Box213") {
-                const html = this.setTooltipData(data);
-                this.showTooltip(html);
-                // if (meshLand.material.color.getHex() === 16711680)
-                //     meshLand.material.color.setHex(this.experience.currentHex);
-                // this.experience.currentHex = meshLand.material.color.getHex()
-                // if (meshLand.material.color.getHex() !== 16711680)
-                //     meshLand.material.color.setHex(0xff0000)
-            }
-        });
-    }
-
-    setTooltipData(land) {
-        const fieldsNotShown = [];
-        let html = '';
-
-        Object.keys(land).filter(k => {
-            return fieldsNotShown.indexOf(k) === -1;
-        }).forEach(k => {
-            html += `
-                <div class="tooltip-row">
-                  <label>${k}:</label> 
-                  <div>${land[k]}</div>
-                </div>
-              `
-        });
-
-        return html;
-    }
-
-    showTooltip(html) {
-        const t = document.getElementById("tooltip");
-
-        t.style.left = this.experience.tooltip.x + 5 + "px";
-        t.style.top = this.experience.tooltip.y + 5 + "px";
-
-        t.innerHTML = html;
-    }
-
-    hideTooltip() {
-        const t = document.getElementById("tooltip");
-
-        t.style.left = "-350px";
-        t.innerHTML = "";
-    }
+    }    
 
     moveToSelectedObject(object, x, y) {
         var aabb = new THREE.Box3().setFromObject(object);
