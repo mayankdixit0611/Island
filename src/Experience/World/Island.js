@@ -1,7 +1,7 @@
-import * as THREE from 'three'
-import { MeshStandardMaterial } from 'three';
+import * as THREE from 'three';
 import Experience from '../Experience.js'
 import gsap from "gsap"
+import { Water } from '../Water.js';
 
 export default class Island {
     constructor() {
@@ -12,6 +12,8 @@ export default class Island {
         this.debug = this.experience.debug;
         this.objects = this.experience.objects;
         this.camera = this.experience.camera;
+        this.sun = null;
+        this.water = null;
 
         // Debug
         if (this.debug.active) {
@@ -22,74 +24,64 @@ export default class Island {
         this.resource = this.resources.items.islandModel;
 
         this.setModel();
+        //this.createWater();
         //this.setAnimation()
     }
 
+    createWater() {
+        this.sun = new THREE.Vector3();
+        const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
+
+        const waterMaterial = '/images/waternormals.jpeg';
+        this.water = new Water(waterGeometry, {
+            textureWidth: 512,
+            textureHeight: 512,
+            waterNormals: new THREE.TextureLoader().load(
+                waterMaterial,
+                function (texture) {
+                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+                }
+            ),
+            sunDirection: new THREE.Vector3(),
+            sunColor: 0xffffff,
+            waterColor: 0x259CC8,
+            distortionScale: 3.7
+        });
+
+        this.water.rotation.x = -Math.PI / 2;
+
+        this.water.material.uniforms.size.value = 15;
+
+        this.scene.add(this.water);
+    }
     setModel() {
         this.model = this.resource.scene
-        this.model.scale.set(0.02, 0.02, 0.02)
-        this.model.scale.set(0.00025, 0.00025, 0.00025)
+        this.model.scale.set(this.experience.scale, this.experience.scale, this.experience.scale)
         this.model.position.set(0, 0, 0);
         this.scene.add(this.model)
 
+        let counter=1;
         this.model.traverse((child) => {
             if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial) {
-                this.objects.push(child);
-                if (child.name == "SM_Water") {
-                    child.receiveShadow = true;
-                    child.material.opacity = 0.7;
-                } else
-                    child.castShadow = true;
+                            
+
+                child.receiveShadow = true;
+                child.castShadow = true;
+                //this.objects.push(child);
+                this.experience.lands.forEach((data, index) => {
+                    if (data['VLAND ID'].trim() === child.name.trim()) {
+                       child.userData = data;                       
+                       this.objects.push(child);
+                       console.log(child);
+                       counter++
+                    }
+                });
+                
             }
-        })
+        });
+
+        document.getElementById('loader').style.display = 'none';
     }
-
-    // setAnimation() {
-    //     this.animation = {}
-
-    //     // Mixer
-    //     this.animation.mixer = new THREE.AnimationMixer(this.model)
-
-    //     // Actions
-    //     this.animation.actions = {}
-
-    //     this.animation.actions.idle = this.animation.mixer.clipAction(this.resource.animations[0])
-    //     this.animation.actions.walking = this.animation.mixer.clipAction(this.resource.animations[1])
-    //     this.animation.actions.running = this.animation.mixer.clipAction(this.resource.animations[2])
-
-    //     this.animation.actions.current = this.animation.actions.idle
-    //     this.animation.actions.current.play()
-
-    //     // Play the action
-    //     this.animation.play = (name) => {
-    //         const newAction = this.animation.actions[name]
-    //         const oldAction = this.animation.actions.current
-
-    //         newAction.reset()
-    //         newAction.play()
-    //         newAction.crossFadeFrom(oldAction, 1)
-
-    //         this.animation.actions.current = newAction
-    //     }
-
-    //     // Debug
-    //     if (this.debug.active) {
-    //         const debugObject = {
-    //             playIdle: () => {
-    //                 this.animation.play('idle')
-    //             },
-    //             playWalking: () => {
-    //                 this.animation.play('walking')
-    //             },
-    //             playRunning: () => {
-    //                 this.animation.play('running')
-    //             }
-    //         }
-    //         this.debugFolder.add(debugObject, 'playIdle')
-    //         this.debugFolder.add(debugObject, 'playWalking')
-    //         this.debugFolder.add(debugObject, 'playRunning')
-    //     }
-    // }
 
     update() {
         // this.animation.mixer.update(this.time.delta * 0.001)
@@ -97,12 +89,11 @@ export default class Island {
     }
 
     click() {
-        if(this.experience.currentIntersect)
-        {
+        if (this.experience.currentIntersect) {
             // if(this.experience.currentIntersect.object.name !== 'SM_Water')
             //     this.moveToSelectedObject(this.experience.currentIntersect.object, 1, 1)
         }
-    }
+    }    
 
     moveToSelectedObject(object, x, y) {
         var aabb = new THREE.Box3().setFromObject(object);

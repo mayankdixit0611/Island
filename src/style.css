@@ -23,3 +23,46 @@ html, body{
     transform: scaleX(0);
     transform-origin: top left;
 }
+
+#tooltip {
+    position: absolute;
+    top: 0px;
+    left: -350px;
+    background-color: rgb(41, 50, 60);
+    color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    min-width: 230px;
+  }
+  
+  .tooltip-row {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding: 4px 0px;
+  }
+
+  #loader {
+    border: 5px solid #f3f3f3;
+    /* Light grey */
+    border-top: 5px solid #3d3d3d;
+    /* Grey */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
