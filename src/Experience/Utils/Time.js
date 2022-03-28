@@ -2,10 +2,8 @@ import * as THREE from 'three';
 import Experience from '../Experience.js'
 import EventEmitter from './EventEmitter.js'
 
-export default class Time extends EventEmitter
-{
-    constructor()
-    {
+export default class Time extends EventEmitter {
+    constructor() {
         super()
 
         this.experience = new Experience();
@@ -19,23 +17,23 @@ export default class Time extends EventEmitter
         this.camera = this.experience.camera;
         this.objects = this.experience.objects;
 
-        window.requestAnimationFrame(() =>
-        {
+        window.requestAnimationFrame(() => {
             this.tick()
         })
     }
 
-    tick()
-    {
-        
-        
+    tick() {
+
+
         this.raycaster.setFromCamera(this.mouse, this.camera.instance);
 
         const intersects = this.raycaster.intersectObjects(this.objects, false);
-        if(intersects.length){
-            if(this.experience.currentIntersect !== intersects[0].object){
-                if(this.experience.currentIntersect){
+        if (intersects.length) {
+            if (this.experience.currentIntersect !== intersects[0].object) {
+                if (this.experience.currentIntersect) {
                     this.experience.currentIntersect.material.color.setHex(this.experience.currentIntersect.currentHex);
+                    this.experience.currentIntersect.material.map = (this.experience.currentIntersect.currentMaterialMap);
+                    this.experience.currentIntersect.material.needsUpdate = true;
                 }
                 this.experience.currentIntersect = intersects[0].object;
                 this.experience.currentIntersect.currentHex = this.experience.currentIntersect.material.color.getHex();
@@ -45,17 +43,17 @@ export default class Time extends EventEmitter
                 this.experience.currentIntersect.material.color.setHex(0xd91e18);
                 this.showTooltip();
             }
-        }else{
+        } else {
             if (this.experience.currentIntersect) {
                 this.experience.currentIntersect.material.color.setHex(this.experience.currentIntersect.currentHex);
                 this.experience.currentIntersect.material.map = (this.experience.currentIntersect.currentMaterialMap);
-                this.experience.currentIntersect.material.needsUpdate =true;
-              }
-        
-              this.experience.currentIntersect = null;
-              this.hideTooltip();
+                this.experience.currentIntersect.material.needsUpdate = true;
+            }
+
+            this.experience.currentIntersect = null;
+            this.hideTooltip();
         }
-        
+
         const currentTime = Date.now()
         this.delta = currentTime - this.current
         this.current = currentTime
@@ -64,13 +62,12 @@ export default class Time extends EventEmitter
 
         this.trigger('tick')
 
-        window.requestAnimationFrame(() =>
-        {
+        window.requestAnimationFrame(() => {
             this.tick()
         })
 
     }
-    
+
     showTooltip() {
         if (!this.experience.currentIntersect) return this.hideTooltip();
 

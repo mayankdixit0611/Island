@@ -72,7 +72,7 @@ export default class Island {
                     if (data['VLAND ID'].trim() === child.name.trim()) {
                        child.userData = data;                       
                        this.objects.push(child);
-                       //console.log(child);
+                       console.log(child);
                        counter++
                     }
                 });
