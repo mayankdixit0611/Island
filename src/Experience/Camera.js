@@ -31,8 +31,8 @@ export default class Camera {
         this.controls.maxPolarAngle = Math.PI / 2;
         this.controls.screenSpacePanning = false;
 
-        this.controls.enableRotate = false;
-        this.controls.enablePan = true;
+        this.controls.enableRotate = true;
+        this.controls.enablePan = false;
         this.controls.mouseButtons = {
             LEFT: THREE.MOUSE.PAN
         }
